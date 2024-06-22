@@ -49,7 +49,6 @@ Do this for each confidential VM in the system. Store the Attestation Keys into 
 Platform configuration registers are special TPM2 objects of which can only be modified or written to by hash extention mechanism. This property will ensure the integrity of our code 
 
 ### Initialize PCR
-<!-- TODO WHY SPECIFICALLY 3 INDEXES? -->
 ```
 tpm2_pcrread sha1:0,1,2+sha256:0,1,2
 ```
@@ -60,16 +59,12 @@ tpm2_pcrread sha1:0,1,2+sha256:0,1,2
 ### Extending values into PCR indices 
 In order to ensure the integrity of a client's code. We must first take the hash of the code, then extend it to the PCR
 
-<!-- TODO CHANGE THIS TO OUR DATA -->
-<!-- THIS SHOULD BE THE BINARY FILE GIVEN -->
-
 **Hashing data**
 *Replace CRITICAL-DATA with your desired data and code*
 ```
 SHA256_DATA=`echo "CRITICAL-DATA" | openssl dgst -sha256 -binary | xxd -p -c 32`
 SHA1_DATA=`echo "CRITICAL-DATA" | openssl dgst -sha1 -binary | xxd -p -c 20`
 ```
-<!-- TODO WHY SPECIFICALLY 3 INDEXES? -->
 **Extending to PCR**
 ```
 tpm2_pcrextend 0:sha1=$SHA1_DATA,sha256=$SHA256_DATA
@@ -99,7 +94,6 @@ tpm2_quote \
 GOLDEN_PCR=`cat pcr.bin | openssl dgst -sha256 -binary | xxd -p -c 32`
 ```
 ### Evaluate PCR values
-<!-- TODO what to look for in evaluation -->
 Now that we have calculated the 'good state' PCR, we can use the golden PCR to evaluate our PCR value.
 
 ## Verify the quote
