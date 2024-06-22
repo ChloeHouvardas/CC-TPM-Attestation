@@ -64,6 +64,7 @@ In order to ensure the integrity of a client's code. We must first take the hash
 <!-- THIS SHOULD BE THE BINARY FILE GIVEN -->
 
 **Hashing data**
+*Replace CRITICAL-DATA with your desired data and code*
 ```
 SHA256_DATA=`echo "CRITICAL-DATA" | openssl dgst -sha256 -binary | xxd -p -c 32`
 SHA1_DATA=`echo "CRITICAL-DATA" | openssl dgst -sha1 -binary | xxd -p -c 20`
@@ -145,22 +146,20 @@ For Example
 az keyvault key import --vault-name myKeyVault --name myImportedKey --pem-file myKey.pem
 ```
 
-## Get Encrypted Wrapper Key via TLS into clean room (TEE), Then Decrypt the Model and Data 
-<!-- TODO change to specific key vault stuff -->
+## Get Encrypted Wrapper Key via TLS from Key Server into clean room (TEE), Then Decrypt the Model and Data 
 ```
-az keyvault secret show --name <secret-name> --vault-name <vault-name>
+az keyvault key download --vault-name <your-key-vault-name> --name <your-key-name> --file <path-to-save-key>
 ```
+**Run decrypt.py on data and model using returned key**
+Replace the key variable with returned key. Modify code to run the decrypt function on specified files
 
 ## Manipulation of Data 
+*The training of the model and creation of synthetic data are found in the second part of the submition*
 
 ## Encrypt Output Data Leaving Clean room
-
-## Applied to multiparty sceneario
-<!-- TODO write how these principles and this process can be applied to a multi party data sharing scenario -->
-- Policies in the key room
-
-
-
+Modify code to run the encrypt function on specified files
+Return files to permitted users 
+Users are returned model insights and synthetic data 
 
 
 ## Sources
