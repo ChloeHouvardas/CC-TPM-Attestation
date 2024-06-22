@@ -54,7 +54,6 @@ tpm2_pcrread sha1:0,1,2+sha256:0,1,2
 ```
 
 ### Upload data and model to TEE (Both are encrypted)
-<!-- TODO -->
 
 ### Extending values into PCR indices 
 In order to ensure the integrity of a client's code. We must first take the hash of the code, then extend it to the PCR
