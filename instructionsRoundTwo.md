@@ -1,5 +1,5 @@
 # Multiparty data sharing confidential computing data clean room solution
-The following is our process to setting up a data clean room solution for part 1 of the GES hackathon.
+The following is our process to setting up a data clean room solution for part 1 of the GES hackathon. It is a prototype solution for a Data Clean Room which facilitates the sharing of data between two parties: Advertisers and publishers. These two parties will pass in encrypted data which will be used to generate synthetic data and predictive analytics. The use of a Trusted Execution environment and remote key/attestation server ensures that the data is safe while 'in use'. 
 
 The chosen process follows a 'background check model' of verification where the relying party asks for verification when the attester presents its evidence'. It was chosen because it is the most common in the industry and it is easier to revoke access in case of any issues.
 
@@ -20,11 +20,7 @@ Below are the specifications used in the demo
 
 Make sure that when prompted, save the private key in a place that you will remember.
 
-### Why Use Azure Confidential VMs
-<!-- TODO fill this out. Talk about the hardware it uses (TPM availibility), scalibility, industry trust, easy to use portal, compare to other solutions, easy for both parties to access -->
-
 ## Install Tools
-<!-- TODO   Explain why we install these -->
 ```
 sudo apt-get update
 ```
@@ -60,14 +56,12 @@ sudo su - <username>
 ## Initialize verification keys 
 
 ### Create Endorsement Key
-<!-- TODO ADD MORE EXPLANATION -->
 The endorsement key is sued to prove that the user is talking to a real TPM.
 ```
 tpm2_createek --ek-context rsa_ek.ctx --key-algorithm rsa --public rsa_ek.pub
 ```
 
 ### Create Attestation Key
-<!-- TODO ADD MORE EXPLANATION -->
 Used for signing of evidence (quote and attestation) and derived from the endorsement key 
 ```
 tpm2_createak \
@@ -81,8 +75,8 @@ tpm2_createak \
    --ak-name rsa_ak.name
 ```
 
-### After the following steps you should have these files availible
-<!-- TODO INSERT PIC HERE -->
+### After the following steps you should have these files on the VM
+rsa_ak.ctx, rsa_ak.name, rsa_ak.priv, rsa_ak.pub, rsa_ek.ctx, rsa_ek.pub, and your uploaded data, model scripts and decryption script
 
 ## Save Attestation public key
 Do this for each confidential VM in the system. Store the Attestation Keys into remote key/attestation server for future usage. See below for how to set up a remote key server and how to send the public key to that server
@@ -97,10 +91,14 @@ In order to ensure the integrity of a client's code. We must first take the hash
 Note: change test_model.py with your desired file
 
 Calculate and export the SHA-256 hash:
+```
 export SHA256_DATA=$(cat test_model.py | openssl dgst -sha256 -binary | xxd -p -c 32)
+```
 
 Calculate and export the SHA-1 hash:
+```
 export SHA1_DATA=$(cat test_model.py | openssl dgst -sha1 -binary | xxd -p -c 20)
+```
 
 **Check the hash values**
 ```
@@ -119,8 +117,7 @@ It is to note that the order of PCRs is important therefore if you mix up the or
 tpm2_pcrreset 23
 ```
 
-<!-- TODO EXPLAIN QUOTES  -->
-
+A quote is a signed version of our PCR. It is signed by the attestation key
 **Create Quote from PCR23**
 ```
 export SERVICE_PROVIDER_NONCE="12345678"
@@ -149,8 +146,6 @@ To get started with the remote key/attestation server, follow the same steps at 
 **Send quote to attestation server**
 Upload pcr_quote.plain and pcr_quote.signature from TEE to remote attestation server
 Note: This should be done on a service such as azure storage which will secure the data in storage as well as in transport, a cheaper but less secure and scalable option that we will not explore in this demo is utilizing a VM as a file server role. 
-
-<!-- TODO why should we use AZURE STORAGE-->
 
 Do the following on the TEE VM
 Install azure CLI
