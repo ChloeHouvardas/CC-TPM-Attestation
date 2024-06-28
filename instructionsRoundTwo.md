@@ -1,6 +1,10 @@
 # Multiparty data sharing confidential computing data clean room solution
 The following is our process to setting up a data clean room solution for part 1 of the GES hackathon. It is a prototype solution for a Data Clean Room which facilitates the sharing of data between two parties: Advertisers and publishers. These two parties will pass in encrypted data which will be used to generate synthetic data and predictive analytics. The use of a Trusted Execution environment and remote key/attestation server ensures that the data is safe while 'in use'. 
 
+Below is a visual representation of the clean room framework 
+![image](https://github.com/ChloeHouvardas/CC-TPM-Attestation/assets/98352257/63d4303c-b347-497a-bda6-7b52bf9f134a)
+
+
 The chosen process follows a 'background check model' of verification where the relying party asks for verification when the attester presents its evidence'. It was chosen because it is the most common in the industry and it is easier to revoke access in case of any issues.
 
 ## Set up an Azure confidential VM
@@ -76,10 +80,12 @@ tpm2_createak \
 ```
 
 ### After the following steps you should have these files on the VM
-rsa_ak.ctx, rsa_ak.name, rsa_ak.priv, rsa_ak.pub, rsa_ek.ctx, rsa_ek.pub, and your uploaded data, model scripts and decryption script
+![image](https://github.com/ChloeHouvardas/CC-TPM-Attestation/assets/98352257/36f3573d-41e9-4619-afb7-96f77dd32cbb)
+
+and other uploaded data, model scripts and decryption script(s)
 
 ## Save Attestation public key
-Do this for each confidential VM in the system. Store the Attestation Keys into remote key/attestation server for future usage. See below for how to set up a remote key server and how to send the public key to that server
+Do this for each confidential VM in the system. Store the Attestation Keys into remote key/attestation server for future usage. See section further below for how to set up a remote key server and how to send the public key to that server
 
 ## Generate PCR values
 Platform configuration registers are special TPM2 objects of which can only be modified or written to by hash extention mechanism. This property will ensure the integrity of our code 
@@ -189,7 +195,7 @@ az storage blob download --account-name mystorageaccount --container-name mycont
 export SERVICE_PROVIDER_NONCE="12345678"
 
 tpm2_checkquote \
---public rsa_ak.pub \
+--public .pub \
 --message pcr_quote.plain \
 --signature pcr_quote.signature \
 --qualification $SERVICE_PROVIDER_NONCE \
